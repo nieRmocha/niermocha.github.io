@@ -37,7 +37,7 @@ function render() {
 
     //Right top
     gl.scissor(canvas.width/2, canvas.height/2, canvas.width/2, canvas.height/2);
-    gl.clearColor(0, 0.6, 0.4, 1);
+    gl.clearColor(0, 0.65, 0.3, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
 
