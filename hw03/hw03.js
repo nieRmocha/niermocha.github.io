@@ -1,14 +1,4 @@
-/*-------------------------------------------------------------------------
-07_LineSegments.js
 
-left mouse button을 click하면 선분을 그리기 시작하고, 
-button up을 하지 않은 상태로 마우스를 움직이면 임시 선분을 그리고, 
-button up을 하면 최종 선분을 저장하고 임시 선분을 삭제함.
-
-임시 선분의 color는 회색이고, 최종 선분의 color는 빨간색임.
-
-이 과정을 반복하여 여러 개의 선분 (line segment)을 그릴 수 있음. 
----------------------------------------------------------------------------*/
 import { resizeAspectRatio, setupText, updateText, Axes } from '../util/util.js';
 import { Shader, readShaderFile } from '../util/shader.js';
 
@@ -182,16 +172,17 @@ function setupMouseEvents() {
             }   
             else { // lines.length == 2 - interception 계산도 여기서
                 intersectionPoints = calculateIntersection(startPoint, tempEndPoint);
-                console.log(intersectionPoints);
-
+                
                 updateText(textOverlay2, "Second line segment: (" + lines[1][0].toFixed(2) + ", " + lines[1][1].toFixed(2) + 
                     ") ~ (" + lines[1][2].toFixed(2) + ", " + lines[1][3].toFixed(2) + ")");
 
                 if (intersectionPoints.length === 0) {
                     updateText(textOverlay3, "No Intersection");
+                    
                 } else if (intersectionPoints.length === 1) {
                     updateText(textOverlay3, "Intersection Points: 1 Point 1: (" + intersectionPoints[0][0].toFixed(2) + ", " + 
                         intersectionPoints[0][1].toFixed(2) + ")");
+                    
                 } else {
                     updateText(textOverlay3, "Intersection Points: 2 Point 1: (" + intersectionPoints[0][0].toFixed(2) + ", " + 
                         intersectionPoints[0][1].toFixed(2) + ") Point 2: (" + intersectionPoints[1][0].toFixed(2) + ", " + 
@@ -219,20 +210,22 @@ function calculateIntersection(start, end) {
     const c = end[1] - start[1];
     const d = start[1];
 
-    //원의 efr (첫번째 시도 = lines[0])
+    //원의 ef (첫번째 시도 = lines[0])
     const e = lines[0][0];
     const f = lines[0][1];
-
-    //x2 - x1, y2 - y1
 
     const A = a*a + c*c;
     const B = 2 * (a*b - a*e + c*d - c*f);
     const C = b*b + d*d + e*e + f*f - r*r - 2*(b*e + d*f);
 
     const D = B*B - 4*A*C;
+    
     if (D < 0) { //교점 없음
         return [];
+        
     } else { //교점이 2개
+
+        //근의 공식
         const t1 = (-B + Math.sqrt(D)) / (2*A);
         const t2 = (-B - Math.sqrt(D)) / (2*A);
         const points = [];
@@ -249,7 +242,7 @@ function calculateIntersection(start, end) {
     }
 }
 
-function drawCircle(start) { //start(x, y) end(x, y) 좌표를 받음
+function drawCircle(start) { //start(x, y) 좌표를 받음
     const segments = 100;
     const circleVertices = [];
 
@@ -295,6 +288,7 @@ function render() {
 
         //첫번째 시도는 원
         if(lines.length === 0) {
+            //원의 반지름도 이때 계산해서 전역변수로
            r = Math.sqrt(Math.pow(tempEndPoint[0] - startPoint[0], 2) + Math.pow((tempEndPoint[1] - startPoint[1]), 2));
            drawCircle(startPoint);
         }
