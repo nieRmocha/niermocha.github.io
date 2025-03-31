@@ -204,37 +204,39 @@ function setupMouseEvents() {
 
 function calculateIntersection(start, end) {
 
-    //선분의 abcd (현재 startPoint, tempEndPoint)
-    const a = end[0] - start[0];
-    const b = start[0];
-    const c = end[1] - start[1];
-    const d = start[1];
+    //선분의 시작점의 좌표값과, 끝점과의 좌표값 차이
+    const x1 = start[0]; // b
+    const y1 = start[1]; // d
+    const xgap = end[0] - start[0]; // a
+    const ygap = end[1] - start[1]; // c
 
-    //원의 ef (첫번째 시도 = lines[0])
-    const e = lines[0][0];
-    const f = lines[0][1];
+    //원의 중심의 좌표값값
+    const cx = lines[0][0]; // e
+    const cy = lines[0][1]; // f
 
-    const A = a*a + c*c;
-    const B = 2 * (a*b - a*e + c*d - c*f);
-    const C = b*b + d*d + e*e + f*f - r*r - 2*(b*e + d*f);
+    // t에 대한 2차방정식의 계수와 상수수
+    const quadEff = xgap ** 2 + ygap ** 2; // A
+    const linearEff = 2 * (xgap * (x1 - cx) + ygap * (y1 - cy)); // B
+    const cons = x1 ** 2 + y1 ** 2 + cx ** 2 + cy ** 2 - r ** 2 - 2*(x1 * cx + y1 * cy); // C
 
-    const D = B*B - 4*A*C;
+    // 판별식
+    const discrim = linearEff ** 2 - 4 * quadEff * cons;
     
-    if (D < 0) { //교점 없음
+    if (discrim < 0) { //교점 없음
         return [];
         
     } else { //교점이 2개
 
         //근의 공식
-        const t1 = (-B + Math.sqrt(D)) / (2*A);
-        const t2 = (-B - Math.sqrt(D)) / (2*A);
+        const t1 = (-linearEff + Math.sqrt(discrim)) / (2 * quadEff);
+        const t2 = (-linearEff - Math.sqrt(discrim)) / (2 * quadEff);
         const points = [];
         
         // 각 t 값이 [0~1] 범위이면 선분과의 교점
         [t1, t2].forEach(t => {
             if (t >= 0 && t <= 1) {
-                const ix = a * t + b;
-                const iy = c * t + d;
+                const ix = xgap * t + x1;
+                const iy = ygap * t + y1;
                 points.push([ix, iy]);
             }
         });
